@@ -12,7 +12,61 @@ function lol(z, y) {
 		return this + n;
 	}
 	
-	foo();
+	if(!w == 5) {
+		console.log('hehehe');
+	}
+	else if(a || x++) {
+		console.log('lol');
+	}
+	else {
+		return 3;
+	}
+	
+	while(x--) {
+		continue;
+		for(var j = 0; j < 9; j++) {
+			do {
+				break;
+				w--;
+			} while(w > 9);
+		}
+	}
+	
+	this.o = {
+		lol: 'lol',
+		meh: 'meh',
+	};
+	
+	a = [0, q];
+	
+	try {
+		for(var p in this.o) {
+			
+			this.o[p] = a[a[0]++];
+		}
+		throw new Error('meh');
+	}
+	catch(e) {
+		switch(5) {
+			case 1:
+				console.log('meh');
+			case 2:
+				console.log('rofl');
+				break;
+			default:
+				console.log('default');
+				break;
+		}
+	}
+	
+	var boobs = function(x) {
+		console.log(x);
+		return boobs;
+	}
+	
+	boobs(o)(o);
+	
+	foo(c ? d : 4);
 }
 
 

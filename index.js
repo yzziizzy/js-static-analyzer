@@ -3,6 +3,7 @@
 
 var jsparser = require('jsparser');
 var fs = require('fs');
+var _ = require('lodash');
 
 
 
@@ -24,14 +25,14 @@ catch(e) {
 function parseFn(ast, parent, fnnode) {
 	var scope = {
 		symDeclared: {},
-		fnDeclared: {},
+		fnDeclared: [],
 		varDeclared: {},
 		symReferenced: {},
 		fnCalled: {},
 		varReferenced: {},
 		
 		
-		
+		flatExp: walkTree(ast, expRules),
 	};
 	
 	
@@ -40,7 +41,11 @@ function parseFn(ast, parent, fnnode) {
 		Identifier: function(node) {
 			
 		},
-		
+		FunctionDeclaration: function(node) {
+			var fn = parseFn(node.body, scope, node);
+			scope.fnDeclared.push(fn);
+			
+		},
 	};
 	
 	
@@ -105,12 +110,21 @@ var rules = {
 };
 
 function self(node, rules) { return [node] };
+function selfAnd() { 
+	var props = Array.prototype.slice.call(arguments);
+	return function(node, rules) { 
+		return c(
+			[node], 
+			props.map(function(x) { return walkTree(node[x], rules) })
+		);
+	};
+};
 
 var expRules = {
 	Program: 'body',
 	EmptyStatement: null,
 	BlockStatement: null,
-	ExpressionStatement: null,
+	ExpressionStatement: selfAnd('expression'),
 	IfStatement: null,
 	LabeledStatement: null,
 	BreakStatement: null,
@@ -125,13 +139,13 @@ var expRules = {
 	ForStatement: null,
 	ForInStatement: null,
 	DebugggerStatement: null,
-	FunctionDeclaration: null,
+	FunctionDeclaration: self,
 	VariableDeclaration: 'declarations',
 	VariableDeclarator: function(node, rules) { return c([node], walkTree(node.init, rules)) }, // hmm, hmm.... need this node and its kids
 	ThisExpression: null,
 	ArrayExpression: null,
 	ObjectExpression: null,
-	FunctionExpression: null,
+	FunctionExpression: self,
 	SequenceExpression: null,
 	UnaryExpression: null,
 	BinaryExpression: null,
@@ -140,21 +154,21 @@ var expRules = {
 	LogicalExpression: null,
 	ConditionalExpression: null,
 	NewExpression: null,
-	CallExpression: null,
-	MemberExpression: null,
+	CallExpression: selfAnd('arguments'),
+	MemberExpression: self,
 	SwitchCase: null,
 	CatchClause: null,
-	Identifier: null,
-	Literal: null,
+	Identifier: self,
+	Literal: self,
 };
 
 
 
 
 function walkTree(node, rules) {
-	
+	if(!node) return [];
 	if(node instanceof Array) {
-		return c(node.map(function(x) { return walkTree(x, rules) }));
+		return _.flatten( c(node.map(function(x) { return walkTree(x, rules) })) );
 	}
 	
 	var list = [];
@@ -171,7 +185,7 @@ function walkTree(node, rules) {
 		return walkTree(node[a], rules);
 	}
 	else if(typeof a == 'function') {
-		return f(node, rules);
+		return a(node, rules);
 	}
 	
 	return [];
@@ -180,12 +194,12 @@ function walkTree(node, rules) {
 
 
 function c() {
-	return Array.prototype.concat.apply(arguments);
+	return Array.prototype.concat.apply([], arguments);
 }
 
 
 
-walkTree(ast, expRules);
+console.log(parseFn(ast.body, null, ast));
 
 
 
