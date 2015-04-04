@@ -5,6 +5,7 @@ var jsparser = require('jsparser');
 var fs = require('fs');
 var _ = require('lodash');
 
+var treeStructure = require('./structure');
 
 
 var path = process.argv[2];
@@ -64,6 +65,8 @@ function parseFn(ast, parent, fnnode) {
 	
 	return scope;
 }
+
+
 
 
 
@@ -133,15 +136,15 @@ var expRules = {
 	SwitchStatement: null,
 	ReturnStatement: null,
 	ThrowStatement: null,
-	TryStatement: null,
-	WhileStatement: null,
+	TryStatement: selfAnd('block', 'handlers', 'finalizer'),
+	WhileStatement: selfAnd('test', 'body'),
 	DoWhileStatement: null,
 	ForStatement: null,
 	ForInStatement: null,
 	DebugggerStatement: null,
 	FunctionDeclaration: self,
 	VariableDeclaration: 'declarations',
-	VariableDeclarator: function(node, rules) { return c([node], walkTree(node.init, rules)) }, // hmm, hmm.... need this node and its kids
+	VariableDeclarator: selfAnd('init'), //function(node, rules) { return c([node], walkTree(node.init, rules)) }, // hmm, hmm.... need this node and its kids
 	ThisExpression: null,
 	ArrayExpression: null,
 	ObjectExpression: null,
@@ -149,12 +152,12 @@ var expRules = {
 	SequenceExpression: null,
 	UnaryExpression: null,
 	BinaryExpression: null,
-	AssignmentExpression: null,
+	AssignmentExpression: selfAnd('left', 'right'),
 	UpdateExpression: null,
 	LogicalExpression: null,
-	ConditionalExpression: null,
+	ConditionalExpression: selfAnd('test','consequent','alternate'),
 	NewExpression: null,
-	CallExpression: selfAnd('arguments'),
+	CallExpression: selfAnd('callee', 'arguments'),
 	MemberExpression: self,
 	SwitchCase: null,
 	CatchClause: null,
@@ -199,10 +202,34 @@ function c() {
 
 
 
-console.log(parseFn(ast.body, null, ast));
+// console.log(parseFn(ast.body, null, ast));
+console.log(mkDFSearch(treeStructure)(ast.body, function() {
+	//find all scopes
+	
+	
+}, []));
 
 
 
+
+// depth first
+function mkDFSearch(treeStructure) {
+	function depthFirst(node, fn, acc) {
+		if(!node) return acc;
+		
+		var edges = treeStructure[node.type]
+		
+		edges.map(function(e) {
+			
+			acc = depthFirst(node[e], fn, acc);
+			acc = fn(node[e], acc); // the children have already been walked by this point
+		});
+		
+		return fn(node, acc);
+	};
+	
+	return depthFirst;
+}
 
 
 
