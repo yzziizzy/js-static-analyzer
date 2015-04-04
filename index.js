@@ -203,10 +203,13 @@ function c() {
 
 
 // console.log(parseFn(ast.body, null, ast));
-console.log(mkDFSearch(treeStructure)(ast.body, function() {
+console.log(mkDFSearch(treeStructure)(ast.body, function(node, acc) {
 	//find all scopes
+// 	console.log(node.type);
+	if(!node.type) console.log(node);
+	acc.push(node.type);
 	
-	
+	return acc;
 }, []));
 
 
@@ -215,14 +218,21 @@ console.log(mkDFSearch(treeStructure)(ast.body, function() {
 // depth first
 function mkDFSearch(treeStructure) {
 	function depthFirst(node, fn, acc) {
-		if(!node) return acc;
 		
-		var edges = treeStructure[node.type]
+		if(!node) return acc;
+		if(node instanceof Array) {
+			return node.reduce(function(acc, node) {
+				return depthFirst(node, fn, acc); 
+				
+			}, acc);
+		}
+		
+		
+		var edges = treeStructure[node.type];
 		
 		edges.map(function(e) {
-			
+			if(!node[e]) return;
 			acc = depthFirst(node[e], fn, acc);
-			acc = fn(node[e], acc); // the children have already been walked by this point
 		});
 		
 		return fn(node, acc);
