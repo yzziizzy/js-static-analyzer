@@ -1,0 +1,43 @@
+
+// expressions
+module.exports = {
+	Program: ['body'],
+	EmptyStatement: [],
+	BlockStatement: ['body'],
+	ExpressionStatement: ['expression'],
+	IfStatement: ['test', 'consequent', 'alternate'],
+	LabeledStatement: ['body'],
+	BreakStatement: [],
+	ContinueStatement: [],
+	WithStatement: ['body'], // this is a really evil part of javascript....
+	SwitchStatement: ['discriminant', 'cases'],
+	ReturnStatement: ['argument'],
+	ThrowStatement: ['argument'],
+	TryStatement: ['block', 'handlers', 'finalizer'],
+	WhileStatement: ['test', 'body'],
+	DoWhileStatement: ['body', 'test'],
+	ForStatement: ['init', 'test', 'update', 'body'],
+	ForInStatement: ['left', 'right', 'body'],
+	DebugggerStatement: [],
+	FunctionDeclaration: [], // don't recurse into declarations
+	VariableDeclaration: ['declarations'],
+	VariableDeclarator: ['init'],
+	ThisExpression: [],
+	ArrayExpression: ['elements'],
+	ObjectExpression: ['properties'],
+	FunctionExpression: [], // don't recurse into declarations
+	SequenceExpression: ['expressions'],
+	UnaryExpression: ['argument'],
+	BinaryExpression: ['left', 'right'],
+	AssignmentExpression: ['left', 'right'],
+	UpdateExpression: ['argument'],
+	LogicalExpression: ['left', 'right'],
+	ConditionalExpression: ['test', 'consequent', 'alternate'],
+	NewExpression: ['callee', 'arguments'],
+	CallExpression: ['callee', 'arguments'],
+	MemberExpression: ['object', 'property'],
+	SwitchCase: ['test', 'consequent'],
+	CatchClause: ['body'],
+	Identifier: [],
+	Literal: [],
+};
