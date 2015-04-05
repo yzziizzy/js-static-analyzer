@@ -25,6 +25,7 @@ module.exports = {
 	ThisExpression: [],
 	ArrayExpression: ['elements'],
 	ObjectExpression: ['properties'],
+	ObjectProperty: ['value'],
 	FunctionExpression: [], // don't recurse into declarations
 	SequenceExpression: ['expressions'],
 	UnaryExpression: ['argument'],
