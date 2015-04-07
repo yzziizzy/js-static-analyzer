@@ -35,6 +35,41 @@ catch(e) {
 
 
 
+function scanDir(path, cb) {
+	fs.readdir(path, function(err, files) {
+		
+		var info = {
+			jsFiles: [],
+			otherFiles: [],
+			dirs: [],
+		};
+		
+		files.map(function(file) {
+			fs.stat(file, function(err, stats) {
+				if(stats.isDirectory()) {
+					scanDir(file, function(err, dirInfo) {
+						info.dirs.push(dirInfo);
+					});
+				}
+				else if(stats.isFile()) {
+					// check for js or json extension
+					
+				}
+				else {
+					info.otherFiles.push(file);
+				}
+			});
+		});
+		
+	});
+		
+	
+	
+	
+}
+
+
+
 
 function parseFn(ast, parent, fnnode) {
 	var scope = {
@@ -90,7 +125,7 @@ var fnCrawl = mkDFSearch(treeStructure);
 
 function parseScope(ast) {
 	var scope = {
-		
+		params: [],
 		fnDec: [],
 		ast: ast,
 	}
