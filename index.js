@@ -13,9 +13,12 @@ Object.defineProperty(Array.prototype, 'setProperty', {
 	}
 });
 
+
+
+var Promise = require('bluebird');
 var jsparser = require('jsparser');
 // "jsparser": "git+http://git@github.com/cjihrig/jsparser.git", // old one, fuck json for not having comments
-var fs = require('fs');
+var fs = Promise.promisifyAll(require('fs'));
 var _ = require('lodash');
 
 var treeStructure = require('./structure');
@@ -33,42 +36,27 @@ catch(e) {
 	console.log("JS Parse Error: " + e);
 }
 
+var Path = require('path');
 
-
-function scanDir(path, cb) {
-	fs.readdir(path, function(err, files) {
-		
-		var info = {
-			jsFiles: [],
-			otherFiles: [],
-			dirs: [],
-		};
-		
-		files.map(function(file) {
-			fs.stat(file, function(err, stats) {
-				if(stats.isDirectory()) {
-					scanDir(file, function(err, dirInfo) {
-						info.dirs.push(dirInfo);
-					});
-				}
-				else if(stats.isFile()) {
-					// check for js or json extension
-					
-				}
-				else {
-					info.otherFiles.push(file);
-				}
-			});
+function scanDir(root) {
+// 	var dir = root + '/' + path;
+	
+	var info = [];
+	
+	return fs.readdirAsync(root)
+	.filter(function(x) { return x[0] != '.'; })
+	.map(function(file) {
+		var fp = Path.join(root, file);
+		return fs.statAsync(fp)
+		.then(function(stats) {
+			return stats.isDirectory() ? scanDir(fp) : fp;
 		});
-		
-	});
-		
-	
-	
-	
+	}).then(_.flatten);
 }
 
-
+scanDir('.').then(function(huh) {
+	console.log(huh);
+});
 
 
 function parseFn(ast, parent, fnnode) {
@@ -155,7 +143,8 @@ function parseScope(ast) {
 // 	
 // 	return acc;
 // }, []));
-console.log(parseScope(ast));
+
+// console.log(parseScope(ast));
 
 
 
