@@ -20,6 +20,9 @@ var jsparser = require('jsparser');
 // "jsparser": "git+http://git@github.com/cjihrig/jsparser.git", // old one, fuck json for not having comments
 var fs = Promise.promisifyAll(require('fs'));
 var _ = require('lodash');
+var Path = require('path');
+
+
 
 var treeStructure = require('./structure');
 
@@ -36,25 +39,24 @@ catch(e) {
 	console.log("JS Parse Error: " + e);
 }
 
-var Path = require('path');
+
 
 function scanDir(root) {
-// 	var dir = root + '/' + path;
 	
-	var info = [];
-	
-	return fs.readdirAsync(root)
-	.filter(function(x) { return x[0] != '.'; })
-	.map(function(file) {
-		var fp = Path.join(root, file);
-		return fs.statAsync(fp)
+	return fs.statAsync(root)
 		.then(function(stats) {
-			return stats.isDirectory() ? scanDir(fp) : fp;
-		});
-	}).then(_.flatten);
+			if(!stats.isDirectory()) return [root];
+			
+			return fs.readdirAsync(root)
+				.filter(function(x) { return x[0] != '.'; })
+				.map(function(file) {
+					return scanDir(Path.join(root, file));
+				});
+		})
+		.then(_.flatten);
 }
 
-scanDir('.').then(function(huh) {
+scanDir('./misc.js').then(function(huh) {
 	console.log(huh);
 });
 
