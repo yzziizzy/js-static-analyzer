@@ -25,6 +25,8 @@ var util = require('util');
 
 
 
+var print = require('./print')(console.log);
+
 var treeStructure = require('./structure');
 
 
@@ -127,8 +129,9 @@ function parseFn(ast, parent) {
 
 var fnCrawl = mkDFSearch(treeStructure);
 
-function parseScope(ast) {
+function parseScope(ast, name) {
 	var scope = {
+		name: name || 'unknown fn',
 		params: [],
 		fnDec: [],
 // 		ast: ast,
@@ -158,10 +161,10 @@ scanDir(argv._[0])
 .then(function(scopes) {
 	loadPasses('./passes').then(function(mods) {
 		
+		// meh, prolly need some other sort of tree mapping function
 		
-		
-		
-		console.log(util.inspect(scopes, true, null));
+		scopes.map(print.scopes);
+// 		console.log(util.inspect(scopes, true, null));
 	});
 	
 })
@@ -172,17 +175,6 @@ scanDir(argv._[0])
 
 
 
-// console.log(parseFn(ast.body, null, ast));
-// console.log(mkDFSearch(treeStructure)(ast.body, function(node, acc) {
-// 	//find all scopes
-// // 	console.log(node.type);
-// 	if(!node.type) console.log(node);
-// 	acc.push(node.type);
-// 	
-// 	return acc;
-// }, []));
-
-// console.log(parseScope(ast));
 
 
 
