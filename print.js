@@ -2,6 +2,9 @@
 var _ = require('lodash');
 
 
+// perhaps a switch to print out stuff based on some sort of 'xpath' for function scopes
+// perhaps an interactive scope explorer
+
 module.exports = function(write) {
 	var M = {
 		scopes: function(scope, indent) {
