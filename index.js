@@ -21,6 +21,7 @@ var jsparser = require('jsparser');
 var fs = Promise.promisifyAll(require('fs'));
 var _ = require('lodash');
 var Path = require('path');
+var util = require('util');
 
 
 
@@ -28,16 +29,31 @@ var treeStructure = require('./structure');
 
 
 var path = process.argv[2];
+var argv = require('minimist')(process.argv.slice(2));
 
 
-var source = fs.readFileSync(path)+'';
 
-try {
-	var ast = jsparser.parse(source);
+
+function loadPasses(folder) {
+	return fs.readdirAsync(folder)
+	.filter(function(x) { return x[0] != '.'; })
+	.map(function(file) {
+		return require(Path.join(folder, file));
+	}); 
 }
-catch(e) {
-	console.log("JS Parse Error: " + e);
+
+
+
+
+
+function parseFile(path) {
+	return fs.readFileAsync(path)
+	.then(function(source) {
+		
+		return parseScope(jsparser.parse(source+''), null);
+	});
 }
+
 
 
 
@@ -56,12 +72,10 @@ function scanDir(root) {
 		.then(_.flatten);
 }
 
-scanDir('./misc.js').then(function(huh) {
-	console.log(huh);
-});
 
+/* old junk
 
-function parseFn(ast, parent, fnnode) {
+function parseFn(ast, parent) {
 	var scope = {
 		symDeclared: {},
 		fnDeclared: [],
@@ -71,7 +85,7 @@ function parseFn(ast, parent, fnnode) {
 		varReferenced: {},
 		
 		
-		flatExp: walkTree(ast, expRules),
+// 		flatExp: walkTree(ast, expRules),
 	};
 	
 	
@@ -106,7 +120,7 @@ function parseFn(ast, parent, fnnode) {
 
 
 
-
+*/
 
 
 
@@ -117,8 +131,8 @@ function parseScope(ast) {
 	var scope = {
 		params: [],
 		fnDec: [],
-		ast: ast,
-	}
+// 		ast: ast,
+	};
 	
 	
 	scope.fnDec = fnCrawl(ast.body, function(node, acc) {
@@ -134,6 +148,28 @@ function parseScope(ast) {
 	
 	return scope;
 }
+
+
+
+
+
+scanDir(argv._[0])
+.map(parseFile)
+.then(function(scopes) {
+	loadPasses('./passes').then(function(mods) {
+		
+		
+		
+		
+		console.log(util.inspect(scopes, true, null));
+	});
+	
+})
+.catch(SyntaxError, function(e) {
+	console.log(e);
+	
+});
+
 
 
 // console.log(parseFn(ast.body, null, ast));
@@ -155,7 +191,7 @@ function mkDFSearch(treeStructure) {
 	function depthFirst(node, fn, acc) {
 		
 		if(!node) return acc;
-		console.log(node);
+		//console.log(node);
 
 		if(node instanceof Array) {
 			return node.reduce(function(acc, node) {
