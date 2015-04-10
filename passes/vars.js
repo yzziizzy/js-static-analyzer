@@ -4,7 +4,7 @@
 
 module.exports = function(scope) {
 	
-	if(!ast.params) return;
+	if(!scope.ast.params) return;
 	
 // 	ast.params
 	console.log(scope.ast);
