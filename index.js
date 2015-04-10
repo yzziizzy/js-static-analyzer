@@ -40,7 +40,7 @@ function loadPasses(folder) {
 	return fs.readdirAsync(folder)
 	.filter(function(x) { return x[0] != '.'; })
 	.map(function(file) {
-		return require(Path.join(folder, file));
+		return require('./'+Path.join(folder, file));
 	}); 
 }
 
@@ -134,7 +134,7 @@ function parseScope(ast, name) {
 		name: name || 'unknown fn',
 		params: [],
 		fnDec: [],
-// 		ast: ast,
+ 		ast: ast,
 	};
 	
 	
@@ -153,17 +153,24 @@ function parseScope(ast, name) {
 }
 
 
-
+function flatten(scope) {
+	return [scope].concat(scope.fnDec.reduce(function(acc, s) {
+		return acc.concat(flatten(s));
+	}, []));
+}
 
 
 scanDir(argv._[0])
 .map(parseFile)
 .then(function(scopes) {
+	
+	var flat = Array.prototype.concat.apply([], scopes.map(flatten));
+	
 	loadPasses('./passes').then(function(mods) {
 		
 		// meh, prolly need some other sort of tree mapping function
-		
-		scopes.map(print.scopes);
+		flat.map(mods[0]);
+// 		scopes.map(print.scopes);
 // 		console.log(util.inspect(scopes, true, null));
 	});
 	
