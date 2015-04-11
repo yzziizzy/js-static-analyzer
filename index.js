@@ -1,19 +1,6 @@
- 
-Object.defineProperty(Array.prototype, 'setProperty', {
-	enumerable: false,
-	configurable: false,
-	writable: false,
-	value: function(prop, value) {
-		var len = this.length;
-		for(var i = 0; i < len; i++) {
-			if(typeof this[i] != 'object') continue;
-			this[i][prop] = value;
-		}
-		return this;
-	}
-});
 
 
+require('./monkeys');
 
 var Promise = require('bluebird');
 var jsparser = require('jsparser');
@@ -23,6 +10,7 @@ var _ = require('lodash');
 var Path = require('path');
 var util = require('util');
 
+var tree = require('./lib/tree');
 
 
 var print = require('./print')(console.log);
@@ -127,7 +115,7 @@ function parseFn(ast, parent) {
 
 
 
-var fnCrawl = mkDFSearch(treeStructure);
+var fnCrawl = tree.dfSearch(treeStructure);
 
 function parseScope(ast, name) {
 	var scope = {
@@ -183,35 +171,6 @@ scanDir(argv._[0])
 
 
 
-
-
-// depth first
-function mkDFSearch(treeStructure) {
-	function depthFirst(node, fn, acc) {
-		
-		if(!node) return acc;
-		//console.log(node);
-
-		if(node instanceof Array) {
-			return node.reduce(function(acc, node) {
-				return depthFirst(node, fn, acc); 
-				
-			}, acc);
-		}
-		
-		
-		var edges = treeStructure[node.type];
-
-		edges.map(function(e) {
-			if(!node[e]) return;
-			acc = depthFirst(node[e], fn, acc);
-		});
-		
-		return fn(node, acc);
-	};
-	
-	return depthFirst;
-}
 
 
 
