@@ -1,4 +1,6 @@
 
+var _ = require('lodash');
+
 var tree = require('../lib/tree');
 var treeStructure = require('../structure');
 
@@ -16,13 +18,24 @@ module.exports = function(scope) {
 		};
 	});
 	
-	console.log(scope.ast);
 	
 	
 	var flatExp = tree.dfSearch(treeStructure)(scope.ast.body, function(node, acc) {
 		acc.push(node);
 		return acc;
 	}, []);
+	
+	
+	scope.varsDeclared = _.where(flatExp, {type: 'VariableDeclarator'}).map(function(e) {
+		return {
+			name: e.name,
+			ast: e,
+			
+		};
+	});
+	
+	scope.symsDeclared = _.extend([], scope.varsDeclared, scope.params);
+	
 	
 	
 	
