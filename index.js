@@ -9,6 +9,7 @@ var fs = Promise.promisifyAll(require('fs'));
 var _ = require('lodash');
 var Path = require('path');
 var util = require('util');
+var colors = require('colors');
 
 var tree = require('./lib/tree');
 

@@ -38,6 +38,16 @@ module.exports = function(scope) {
 	
 	
 	
+	scope.varsRefd = _.where(flatExp, {type: 'Identifier'}).map(function(e) {
+		
+		
+		
+		return {
+			name: e.name,
+			ast: e,
+			
+		};
+	});
 	
 	
 };
@@ -45,8 +55,12 @@ module.exports = function(scope) {
 
 
 
-
-
+// object references have deeply nested identifier names.
+function collectIdName(id) {
+	
+	
+	
+}
 
 
 
