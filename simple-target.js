@@ -8,6 +8,14 @@ function lol(z, y) {
 	
 	var w = x + d;
 	
+	var t = {
+		u: {
+			v: 4
+		}
+	};
+	
+	t.u.k = 5;
+	
 	var foo = function(m, n) {
 		return this + n;
 	}

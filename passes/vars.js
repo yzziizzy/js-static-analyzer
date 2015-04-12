@@ -20,13 +20,10 @@ module.exports = function(scope) {
 	
 	
 	
-	var flatExp = tree.dfSearch(treeStructure)(scope.ast.body, function(node, acc) {
-		acc.push(node);
-		return acc;
-	}, []);
+
 	
 	
-	scope.varsDeclared = _.where(flatExp, {type: 'VariableDeclarator'}).map(function(e) {
+	scope.varsDeclared = _.where(scope.flatExp, {type: 'VariableDeclarator'}).map(function(e) {
 		return {
 			name: e.name,
 			ast: e,
@@ -38,12 +35,11 @@ module.exports = function(scope) {
 	
 	
 	
-	scope.varsRefd = _.where(flatExp, {type: 'Identifier'}).map(function(e) {
-		
+	scope.varsRefd = _.where(scope.flatExp, {type: 'MemberExpression'}).map(function(e) {
 		
 		
 		return {
-			name: e.name,
+			name: collectIdName(e),
 			ast: e,
 			
 		};
@@ -58,7 +54,9 @@ module.exports = function(scope) {
 // object references have deeply nested identifier names.
 function collectIdName(id) {
 	
+	if(id.type == 'Identifier');
 	
+	console.log(id);
 	
 }
 

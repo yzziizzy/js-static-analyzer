@@ -137,6 +137,11 @@ function parseScope(ast, name) {
 	}, []).map(parseScope).setProperty('parent', scope);
 	
 	
+	scope.flatExp = fnCrawl(scope.ast.body, function(node, acc) {
+		acc.push(node);
+		return acc;
+	}, []);
+	
 	
 	return scope;
 }
