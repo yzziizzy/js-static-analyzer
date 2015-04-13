@@ -44,8 +44,38 @@ module.exports = function(scope) {
 			
 		};
 	});
-	
-	
+/*
+{ type: 'MemberExpression',
+  object: 
+   { type: 'Identifier',
+     name: 't',
+     loc: { source: null, start: [Object], end: [Object] } },
+  property: 
+   { type: 'Identifier',
+     name: 'u',
+     loc: { source: null, start: [Object], end: [Object] } },
+  computed: false,
+  loc: 
+   { source: null,
+     start: { line: 17, column: 1 },
+     end: { line: 17, column: 4 } } }
+{ type: 'MemberExpression',
+  object: 
+   { type: 'MemberExpression',
+     object: { type: 'Identifier', name: 't', loc: [Object] },
+     property: { type: 'Identifier', name: 'u', loc: [Object] },
+     computed: false,
+     loc: { source: null, start: [Object], end: [Object] } },
+  property: 
+   { type: 'Identifier',
+     name: 'k',
+     loc: { source: null, start: [Object], end: [Object] } },
+  computed: false,
+  loc: 
+   { source: null,
+     start: { line: 17, column: 1 },
+     end: { line: 17, column: 6 } } }
+*/
 };
 
 
