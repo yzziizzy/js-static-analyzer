@@ -29,7 +29,7 @@ function loadPasses(folder) {
 	return fs.readdirAsync(folder)
 	.filter(function(x) { return x[0] != '.'; })
 	.map(function(file) {
-		return require('./'+Path.join(folder, file));
+		return {name: file.replace(/\..*$/, ''), fn: require('./'+Path.join(folder, file))};
 	}); 
 }
 
@@ -161,9 +161,9 @@ scanDir(argv._[0])
 	var flat = Array.prototype.concat.apply([], scopes.map(flatten));
 	
 	loadPasses('./passes').then(function(mods) {
-		
+		var m = _.indexBy(mods, 'name');
 		// meh, prolly need some other sort of tree mapping function
-		flat.map(mods[0]);
+		flat.map(m.builtinExceptions.fn);
 // 		scopes.map(print.scopes);
 // 		console.log(util.inspect(scopes, true, null));
 	});

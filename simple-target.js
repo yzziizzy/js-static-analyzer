@@ -14,7 +14,7 @@ function lol(z, y) {
 		}
 	};
 	
-	t.u.k = 5;
+	t.u.k = 5 / x;
 	
 	var foo = function(m, n) {
 		return this + n;
