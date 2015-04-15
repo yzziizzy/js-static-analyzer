@@ -33,7 +33,13 @@ function loadPasses(folder) {
 	}); 
 }
 
-
+function loadAxioms(folder) {
+	return fs.readdirAsync(folder)
+	.filter(function(x) { return x[0] != '.'; })
+	.reduce(acc, function(file) {
+		return _.extend(acc, require('./'+Path.join(folder, file)))};
+	}); 
+}
 
 
 
