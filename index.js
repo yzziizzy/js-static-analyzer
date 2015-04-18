@@ -122,7 +122,7 @@ function parseFn(ast, parent) {
 
 
 
-var fnCrawl = tree.dfSearch(treeStructure);
+var fnCrawl = tree.dfSearch(treeStructure.scopes);
 
 function parseScope(ast, name) {
 	var scope = {
@@ -170,13 +170,33 @@ scanDir(argv._[0])
 		var m = _.indexBy(mods, 'name');
 		// meh, prolly need some other sort of tree mapping function
 		flat.map(m.vars.fn);
+		
+		
  		if(argv['print-scopes']) scopes.map(print.scopes);
  		if(argv['print-ast']) {
-			scopes.map(function(s) {
-				
-				console.log(util.inspect(s.ast, true, null));
-			});
+			var line = argv['near'] || null;
+			var ep = argv['epsilon']|0||0;
 			
+			if(line == null) {
+				scopes.map(function(s) {
+					console.log(util.inspect(s.ast, true, null));
+				});
+				
+				return;
+			}
+			
+			
+			
+			tree.dfSearch(treeStructure.all)(scopes[0].ast, function(node, acc) {;
+				if(!node.loc) return;
+				
+				if(Math.abs(node.loc.start.line - line) <= ep || 
+					Math.abs(node.loc.end.line - line) <= ep) {
+					
+					console.log(node);
+				}
+				
+			});
 		}
 		//console.log(util.inspect(scopes, true, null));
 	});

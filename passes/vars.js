@@ -2,7 +2,7 @@
 var _ = require('lodash');
 
 var tree = require('../lib/tree');
-var treeStructure = require('../structure');
+var treeStructure = require('../structure').scopes;
 
 
 module.exports = function(scope) {
