@@ -37,7 +37,7 @@ function loadAxioms(folder) {
 	return fs.readdirAsync(folder)
 	.filter(function(x) { return x[0] != '.'; })
 	.reduce(acc, function(file) {
-		return _.extend(acc, require('./'+Path.join(folder, file)))};
+		return _.extend(acc, require('./'+Path.join(folder, file)));
 	}); 
 }
 
@@ -169,9 +169,16 @@ scanDir(argv._[0])
 	loadPasses('./passes').then(function(mods) {
 		var m = _.indexBy(mods, 'name');
 		// meh, prolly need some other sort of tree mapping function
-		flat.map(m.builtinExceptions.fn);
-// 		scopes.map(print.scopes);
-// 		console.log(util.inspect(scopes, true, null));
+		flat.map(m.vars.fn);
+ 		if(argv['print-scopes']) scopes.map(print.scopes);
+ 		if(argv['print-ast']) {
+			scopes.map(function(s) {
+				
+				console.log(util.inspect(s.ast, true, null));
+			});
+			
+		}
+		//console.log(util.inspect(scopes, true, null));
 	});
 	
 })

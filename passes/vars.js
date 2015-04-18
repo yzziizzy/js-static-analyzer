@@ -34,15 +34,10 @@ module.exports = function(scope) {
 	scope.symsDeclared = _.extend([], scope.varsDeclared, scope.params);
 	
 	
+	scope.varsRefd = [];
+	extractFirstLayer(scope.ast, ['MemberExpression']).map(function(n) {
 	
-	scope.varsRefd = _.where(scope.flatExp, {type: 'MemberExpression'}).map(function(e) {
-		
-		
-		return {
-			name: collectIdName(e),
-			ast: e,
-			
-		};
+
 	});
 /*
 { type: 'MemberExpression',
@@ -80,6 +75,9 @@ module.exports = function(scope) {
 
 
 
+// we need to pull out the 'object' of the deepest nested member expression
+// however, recurse into calculated expressions as other variables may be referenced
+
 
 // object references have deeply nested identifier names.
 function collectIdName(id) {
@@ -92,11 +90,25 @@ function collectIdName(id) {
 
 
 
-
-
-
-
-
-
-
+function extractFirstLayer(ast, types) {
+	
+	var ts = _.extend({}, treeStructure);
+	
+	// don't recurse into the node types we are looking for 
+	types.map(function(t) {
+		ts[t] = [];
+	});
+	
+	var crawl = tree.dfSearch(ts);
+	
+	
+	return crawl(ast.body, function(node, acc) {
+		
+		if(types.indexOf(node.type) > -1) {
+			acc.push(node);
+		}
+		
+		return acc;
+	}, []);
+};
 
