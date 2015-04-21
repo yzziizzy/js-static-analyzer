@@ -33,11 +33,27 @@ module.exports = function(scope) {
 	
 	scope.symsDeclared = _.extend([], scope.varsDeclared, scope.params);
 	
+	var vars = Object.create(null);
 	
 	scope.varsRefd = [];
-	extractFirstLayer(scope.ast, ['MemberExpression']).map(function(n) {
 	
-
+	// BUG: this doesn't get vars nested inside member expressions
+	extractFirstLayer(scope.ast, ['MemberExpression']).map(function(n) {
+		var o = baseObject(n);
+		
+		if(o.type == 'Identifier' && !vars[o.name]) {
+			vars[o.name] = true;
+			
+			scope.varsRefd.push({
+				name: o.name,
+			});
+		}
+		
+		console.log(o);
+		
+		console.log('-------------------------------------------'.blue.bold);
+		
+		console.log('==========================================='.magenta);
 	});
 /*
 { type: 'MemberExpression',
@@ -72,6 +88,27 @@ module.exports = function(scope) {
      end: { line: 17, column: 6 } } }
 */
 };
+
+
+function baseObject(exp) {
+	if(!exp.object) {
+		console.log('!! Missing object '.red, exp);
+		return;
+	}
+	
+	// recurse, object is nested
+	if(exp.object.type == 'MemberExpression') {
+		return baseObject(exp.object);
+	}
+	
+	//if(exp.object.type == 'Identifier' || exp.object.type == 'ThisExpression') {
+	return exp.object;
+	//}
+	
+	console.log('!! unexpected path in baseObject. '.red, exp);
+}
+
+
 
 
 
