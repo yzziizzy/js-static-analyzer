@@ -63,14 +63,14 @@ module.exports = {
 		ForStatement: ['init', 'test', 'update', 'body'],
 		ForInStatement: ['left', 'right', 'body'],
 		DebugggerStatement: [],
-		FunctionDeclaration: ['body'], // don't recurse into declarations
+		FunctionDeclaration: ['body'], 
 		VariableDeclaration: ['declarations'],
 		VariableDeclarator: ['init'],
 		ThisExpression: [],
 		ArrayExpression: ['elements'],
 		ObjectExpression: ['properties'],
 		ObjectProperty: ['value'],
-		FunctionExpression: ['body'], // don't recurse into declarations
+		FunctionExpression: ['body'], 
 		SequenceExpression: ['expressions'],
 		UnaryExpression: ['argument'],
 		BinaryExpression: ['left', 'right'],

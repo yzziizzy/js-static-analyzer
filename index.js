@@ -169,7 +169,7 @@ scanDir(argv._[0])
 	loadPasses('./passes').then(function(mods) {
 		var m = _.indexBy(mods, 'name');
 		// meh, prolly need some other sort of tree mapping function
-		flat.map(m.vars.fn);
+		flat.map(m.simpleAST.fn);
 		
 		
  		if(argv['print-scopes']) scopes.map(print.scopes);
