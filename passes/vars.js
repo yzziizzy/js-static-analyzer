@@ -37,24 +37,36 @@ module.exports = function(scope) {
 	
 	scope.varsRefd = [];
 	
-	// BUG: this doesn't get vars nested inside member expressions
-	extractFirstLayer(scope.ast, ['MemberExpression']).map(function(n) {
-		var o = baseObject(n);
-		
-		if(o.type == 'Identifier' && !vars[o.name]) {
-			vars[o.name] = true;
+	(function harvest(ast) {
+		// BUG: this doesn't get vars nested inside member expressions
+		extractFirstLayer(ast, ['MemberExpression']).map(function(n) {
+			var o = baseObject(n);
 			
-			scope.varsRefd.push({
-				name: o.name,
-			});
-		}
+			if(o.type == 'Identifier' && !vars[o.name]) {
+				vars[o.name] = true;
+				
+				scope.varsRefd.push({
+					name: o.name,
+				});
+				
+				return;
+			}
+			
+			
+			//console.log(o);
+			
+			console.log('-------------------------------------------'.blue.bold);
+			console.log('harvesting');
+			var y = tree.nextLayer(o);
+			console.log(y);
+			harvest(y);
+			console.log('==========================================='.magenta);
+		});
 		
-		console.log(o);
-		
-		console.log('-------------------------------------------'.blue.bold);
-		
-		console.log('==========================================='.magenta);
-	});
+	})(scope.ast);
+	
+	
+	return scope;
 /*
 { type: 'MemberExpression',
   object: 
@@ -128,6 +140,15 @@ function collectIdName(id) {
 
 
 function extractFirstLayer(ast, types) {
+	
+	if(ast instanceof Array) {
+		var t =  ast.reduce(function(acc, a) {
+			acc.concat(extractFirstLayer(a, types));
+			return acc;
+		}, []);
+		console.log('t:', t);
+		return t;
+	}
 	
 	var ts = _.extend({}, treeStructure);
 	

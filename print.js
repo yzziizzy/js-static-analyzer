@@ -12,6 +12,7 @@ module.exports = function(write) {
 // 			console.log(scope);
 			write(indent + 'Name:   ' + scope.name);
 			write(indent + 'Params: ' + _.pluck(scope.params, 'name').join(', '));
+			write(indent + 'VarRef: ' + _.pluck(scope.varsRefd, 'name').join(', '));
 			if(scope.fnDec.length) {
 				write(indent + 'SubFns: ');
 				scope.fnDec.map(function(s) {
